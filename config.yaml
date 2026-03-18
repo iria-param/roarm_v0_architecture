@@ -1,0 +1,103 @@
+# ============================================================
+# RoArm-M2S VLaM — Runtime Configuration
+# ============================================================
+
+# ----------------------------------------------------------
+# Network
+# ----------------------------------------------------------
+arm:
+  ip: "192.168.4.1"       # ESP32 AP default; change for STA mode
+  port: 80
+  timeout_s: 3            # HTTP request timeout in seconds
+  js_endpoint: "/js"      # JSON command endpoint
+
+# ----------------------------------------------------------
+# Gemini API
+# ----------------------------------------------------------
+gemini:
+  model: "gemini-robotics-er-1.5-preview"
+  thinking_budget_detect: 0      # low-latency object detection
+  thinking_budget_plan: 1024     # accuracy-critical trajectory planning
+  max_retries: 2
+  # API key is read from env var GEMINI_API_KEY (never store here)
+
+# ----------------------------------------------------------
+# 4-DOF Joint Limits  (degrees)
+# ----------------------------------------------------------
+dof_limits:
+  T: [0,   360]    # Base rotation — full 360°
+  B: [-45, 135]    # Shoulder — rubber-band assist required above 90°
+  A: [-90,  90]    # Elbow — compliant mode above 70% torque
+  G: [0,   100]    # Gripper open% — 0=fully closed, 100=fully open
+
+# ----------------------------------------------------------
+# Safe Workspace  (mm from arm base center)
+# ----------------------------------------------------------
+workspace_mm:
+  x: [-450, 450]
+  y: [-450, 450]
+  z: [0,    600]
+
+# Maximum safe reach for trajectory planning
+max_reach_mm: 400
+
+# ----------------------------------------------------------
+# Anti-Gravity Tuning
+# ----------------------------------------------------------
+anti_gravity:
+  rubber_bands_fitted: true     # set false if bands not installed → reduced speed
+  shoulder_base_speed: 100      # units/s at θ=90° (no gravity load)
+  shoulder_gravity_k: 0.4       # fraction of speed lost at full horizontal
+  elbow_base_speed: 80
+  elbow_gravity_k: 0.3
+  base_speed: 120               # Base joint — no gravity concern
+  gripper_speed: 120            # Gripper — no gravity concern
+
+# Firmware torque thresholds (% of max torque)
+torque_thresholds:
+  B: 80    # Shoulder
+  A: 70    # Elbow
+  G: 50    # Gripper (delicate objects)
+
+# ----------------------------------------------------------
+# Gripper
+# ----------------------------------------------------------
+gripper:
+  default_force_ma: 300    # mA — safe for most objects
+  max_force_ma: 500
+  delicate_force_ma: 150   # paper cups, fragile items
+
+# ----------------------------------------------------------
+# Camera
+# ----------------------------------------------------------
+camera:
+  device_index: 0
+  width: 640
+  height: 480
+  fps: 5
+  jpeg_quality: 85          # 0–100; lower = smaller payload to Gemini
+
+# Calibration placeholders — filled by calibration.py
+calibration:
+  origin_y: 500             # normalized image coords (0–1000)
+  origin_x: 500
+  scale_mm_per_unit: 0.5    # mm per image unit; update after calibration
+  camera_height_cm: 60
+  camera_angle_deg: 45      # tilt from horizontal
+
+# ----------------------------------------------------------
+# Task Execution
+# ----------------------------------------------------------
+task:
+  pick_height_mm: 80        # z height for approach before descending to object
+  carry_height_mm: 150      # z height for carrying between locations
+  verify_on_complete: true  # always run verify() at end of sequence
+  max_retries_on_verify: 1  # retry once on mismatch
+
+# ----------------------------------------------------------
+# Logging
+# ----------------------------------------------------------
+logging:
+  level: "INFO"             # DEBUG | INFO | WARNING | ERROR
+  log_to_file: false
+  log_file: "roarm_vlam.log"

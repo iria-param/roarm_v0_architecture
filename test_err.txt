@@ -1,0 +1,20 @@
+﻿
+=================================== ERRORS ====================================
+___________________ ERROR collecting tests/test_task_fsm.py ___________________
+ImportError while importing test module 'C:\Users\Hari S\Desktop\ROARM-AG\roarm_vlam\tests\test_task_fsm.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\AppData\Local\Programs\Python\Python314\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_task_fsm.py:13: in <module>
+    from task_fsm import TaskFSM, State, TaskFailed, TaskResult
+task_fsm.py:25: in <module>
+    from gemini_client import GeminiClient
+gemini_client.py:23: in <module>
+    import google.generativeai as genai
+E   ModuleNotFoundError: No module named 'google.generativeai'
+=========================== short test summary info ===========================
+ERROR tests/test_task_fsm.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.36s
